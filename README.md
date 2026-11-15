@@ -29,10 +29,21 @@
 - **D6** 综合块(5/6/7)**自选**——v1 先 faithful 抽取,综合留用户填。
 - **D7** 差异化定位:人读友好 + 强制综合的读书笔记 skill,非机器检索索引(待实测后最终敲定)。
 
+## 进度日志
+
+- **2026-11-15** 输入就绪:27 本写作类书已全部转成 markdown,存于 `/Users/sl_yang/Documents/book/写作的书/文本`(共 ~12.7 万行)。
+- **2026-11-15** MVP 启动:
+  - 选定第一本验证书 = 《写作这回事》(斯蒂芬·金;张坤译,2.8k 行,结构清晰、含标志性"工具箱"章)。
+  - 设计 reader 元技能:`reader/SKILL.md` + `reader/references/note-template.md`(七块骨架模板)。
+  - 跑通第一份笔记样例:`samples/写作这回事/`(薄 `SKILL.md` + `references/note.md`),块 1–4 faithful 抽取、块 5–7 留引导式空模板。
+  - 初步验证 D5(七块骨架)成立:工具箱章天然对应"心智模型"块;D7(人读友好+强制综合)方向成立。
+
 ## 待办 / 下一步
 
-- [ ] 用 zhimaAi/BookToSkill 跑一本样书做 spike,对照 D5/D7 看差距
-- [ ] 设计 reader 元技能的抽取模板(七块骨架 → references/note.md)
-- [ ] 设计笔记 skill 的 `description` 模板(人读 + Pi 可检索)
-- [ ] 选定第一本验证书
+- [x] 选定第一本验证书 → 《写作这回事》
+- [x] 设计 reader 元技能的抽取模板(七块骨架 → references/note.md)
+- [x] 设计笔记 skill 的 `description` 模板(人读 + Pi 可检索)
+- [ ] 用 zhimaAi/BookToSkill 跑同一本样书做 spike,**对照 D5/D7 看差距**(七块骨架 vs 它的 JSONL 索引,验证差异化定位)
+- [ ] 让用户在块 5–7 填完《写作这回事》的真实综合,验证"综合块"是否真能沉淀个人知识
+- [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,但需先解决其"标题结构丢失"的抽取问题)
 - [ ] 打通 `sl-yang-dl/skills` 的 `install.sh` 激活流程
