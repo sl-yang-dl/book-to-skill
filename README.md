@@ -38,12 +38,18 @@
   - 跑通第一份笔记样例:`samples/写作这回事/`(薄 `SKILL.md` + `references/note.md`),块 1–4 faithful 抽取、块 5–7 留引导式空模板。
   - 初步验证 D5(七块骨架)成立:工具箱章天然对应"心智模型"块;D7(人读友好+强制综合)方向成立。
 
+- **2026-11-15** 远端已建:`sl-yang-dl/book-to-skill`(私有),`main` 已 push。
+- **2026-11-15** Spike 对照完成:见 `spike/comparison.md`。结论 **D7 成立**——BookToSkill 契约层只有 TITLE/SUMMARY/KEYWORD/QUESTION/EVIDENCE 且禁止模型写理解,块 5–7(与我连接/可执行/未解)是其根本无法覆盖的差异化壁垒。(注:受环境限制,BookToSkill 为契约级重建,未实时 run,覆盖度实测仍待补。)
+- **2026-11-15** 《写作这回事》笔记块 5–7 已起草**待用户确认的草稿**(基于其"写作的书"收藏与 book-to-skill 项目上下文),用于检验综合块能否沉淀个人知识。
+
 ## 待办 / 下一步
 
 - [x] 选定第一本验证书 → 《写作这回事》
 - [x] 设计 reader 元技能的抽取模板(七块骨架 → references/note.md)
 - [x] 设计笔记 skill 的 `description` 模板(人读 + Pi 可检索)
-- [ ] 用 zhimaAi/BookToSkill 跑同一本样书做 spike,**对照 D5/D7 看差距**(七块骨架 vs 它的 JSONL 索引,验证差异化定位)
-- [ ] 让用户在块 5–7 填完《写作这回事》的真实综合,验证"综合块"是否真能沉淀个人知识
-- [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,但需先解决其"标题结构丢失"的抽取问题)
+- [x] push 到远端(`sl-yang-dl/book-to-skill`,私有)
+- [x] Spike:用 zhimaAi/BookToSkill 契约对照七块骨架,验证 D7(结论:成立)
+- [ ] **用户确认/改写**《写作这回事》笔记块 5–7 草稿,真正沉淀个人综合
+- [ ] (可选)实时 run BookToSkill 做覆盖度实测,补全 spike 缺口
+- [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,需先解决其"标题结构丢失"的抽取问题)
 - [ ] 打通 `sl-yang-dl/skills` 的 `install.sh` 激活流程
