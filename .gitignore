@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# 书籍 / 输入(版权 + 体积,勿入库)
+books/
+input/
+*.pdf
+*.epub
+*.mobi
+*.txt
+
+# logs
+*.log
+doc.log
