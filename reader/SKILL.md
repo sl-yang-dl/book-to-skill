@@ -33,6 +33,8 @@ description: >-
      正文只放一句话来源说明 + 指向 `references/note.md` 的指引。
    - `references/note.md`:七块骨架的完整抽取结果。
 4. **命名**:笔记 skill 目录建议用 `samples/<书名>/`。
+5. **发布(闭环)**:笔记产出后,调用 `publisher` 技能(`publisher/SKILL.md`)把站点同步并推送上线,
+   实现"解析完一本书 → 网站自动更新"。本地可直接 `cd site && npm run publish`。
 
 ## 七块骨架(D5)
 
@@ -48,6 +50,12 @@ description: >-
 
 本笔记**不是** RAG 索引。它要求写「与我连接 / 可执行 / 未解问题」,产出的是
 "你读过的证据 + 个人知识沉淀",而非"这本书讲了啥、问啥答啥"。人读友好优先。
+
+## 全链路自动化
+
+1. **reader**(本技能):书 → `samples/<书名>/` 笔记 skill(七块骨架)。
+2. **publisher**(`publisher/SKILL.md`):笔记 → 同步进 VitePress 站点 → push → GitHub Pages 自动部署。
+两步串起来即"喂一本书 → 产出笔记 → 网站更新"的闭环。
 
 ## 注意
 

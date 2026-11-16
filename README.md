@@ -29,6 +29,36 @@
 - **D6** 综合块(5/6/7)**自选**——v1 先 faithful 抽取,综合留用户填。
 - **D7** 差异化定位:人读友好 + 强制综合的读书笔记 skill,非机器检索索引(待实测后最终敲定)。
 
+## 技能(Skills)
+
+| 技能 | 作用 |
+|---|---|
+| `reader/` | 元技能:喂一本书 → 产出 `samples/<书名>/` 笔记 skill(七块骨架)。 |
+| `publisher/` | 发布技能:笔记 → 同步进站点 → push → GitHub Pages 自动部署,闭环上线。 |
+
+全链路:**reader** 产出笔记 → **publisher** 同步并推送 → GitHub Actions 部署。本地一键发布:`cd site && npm run publish`。
+
+## 在线阅览网站(website)
+
+笔记本身就是标准 markdown,已用 **VitePress** 搭成一个静态读书笔记网站,可本地浏览或部署到任意静态托管。
+
+- 站点代码:`site/`(VitePress 项目)
+- 同步脚本:`scripts/sync-notes.mjs` —— 扫描 `samples/<书名>/references/note.md`,自动生成页面与侧边栏
+- 内容目录:`site/books/`(由脚本生成,**勿手改**,已 gitignore)
+
+```bash
+cd site
+npm install        # 首次
+npm run dev         # 本地预览 http://localhost:5173
+npm run build       # 产出 site/.vitepress/dist
+```
+
+新增一本书:在 `samples/` 下建 `<书名>/references/note.md` 即可,跑 `npm run sync`(或 build/dev 会自动跑)自动上线,无需改配置。
+部署:已配好 GitHub Actions(`.github/workflows/deploy.yml`),push 到 `main` 即自动构建并发布到 GitHub Pages。
+构建命令 `cd site && npm run build`(通过 `VP_BASE=/book-to-skill/` 注入基路径),产物 `site/.vitepress/dist` 由 `actions/upload-pages-artifact` + `deploy-pages` 发布。
+**开启方式**:仓库 Settings → Pages → Source 选 **GitHub Actions**(首次推送工作流会自动跑)。
+> ⚠️ 当前仓库为私有。GitHub Free 版不支持私有库开通 Pages,需把仓库设为**公开**,或升级到 Pro/Team/Enterprise 才能正常发布。
+
 ## 进度日志
 
 - **2026-11-15** 输入就绪:27 本写作类书已全部转成 markdown,存于 `/Users/sl_yang/Documents/book/写作的书/文本`(共 ~12.7 万行)。
@@ -40,7 +70,7 @@
 
 - **2026-11-15** 远端已建:`sl-yang-dl/book-to-skill`(私有),`main` 已 push。
 - **2026-11-15** Spike 对照完成:见 `spike/comparison.md`。结论 **D7 成立**——BookToSkill 契约层只有 TITLE/SUMMARY/KEYWORD/QUESTION/EVIDENCE 且禁止模型写理解,块 5–7(与我连接/可执行/未解)是其根本无法覆盖的差异化壁垒。(注:受环境限制,BookToSkill 为契约级重建,未实时 run,覆盖度实测仍待补。)
-- **2026-11-15** 《写作这回事》笔记块 5–7 已起草**待用户确认的草稿**(基于其"写作的书"收藏与 book-to-skill 项目上下文),用于检验综合块能否沉淀个人知识。
+- **2026-11-16** 上线阅览网站:MVP 用 VitePress + `scripts/sync-notes.mjs` 自动同步 `samples/` 为站点,本地 `npm run build` 通过、首页与笔记页均 200。
 
 ## 待办 / 下一步
 
@@ -49,7 +79,8 @@
 - [x] 设计笔记 skill 的 `description` 模板(人读 + Pi 可检索)
 - [x] push 到远端(`sl-yang-dl/book-to-skill`,私有)
 - [x] Spike:用 zhimaAi/BookToSkill 契约对照七块骨架,验证 D7(结论:成立)
-- [ ] **用户确认/改写**《写作这回事》笔记块 5–7 草稿,真正沉淀个人综合
+- [x] 搭好 VitePress 在线阅览站点(自动同步 `samples/`,本地 build 通过)
+- [ ] **部署上线**:GitHub Pages —— 开启 Settings→Pages→GitHub Actions,并确保仓库公开(Free 版限制)
 - [ ] (可选)实时 run BookToSkill 做覆盖度实测,补全 spike 缺口
 - [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,需先解决其"标题结构丢失"的抽取问题)
 - [ ] 打通 `sl-yang-dl/skills` 的 `install.sh` 激活流程

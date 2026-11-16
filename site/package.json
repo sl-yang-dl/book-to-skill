@@ -1,0 +1,16 @@
+{
+  "name": "book-to-skill-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node ../scripts/sync-notes.mjs",
+    "dev": "npm run sync && vitepress dev",
+    "build": "npm run sync && vitepress build",
+    "preview": "vitepress preview",
+    "publish": "npm run sync && git add -A samples site scripts .github README.md && git commit -m \"docs: sync notes & update site\" && git push"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

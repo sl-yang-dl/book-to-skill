@@ -18,6 +18,13 @@ input/
 *.mobi
 *.txt
 
+# 网站构建产物(由 samples/ 同步生成,勿入库)
+site/node_modules/
+site/.vitepress/cache/
+site/.vitepress/dist/
+site/.vitepress/books.json
+site/books/
+
 # logs
 *.log
 doc.log

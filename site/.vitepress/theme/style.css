@@ -1,0 +1,258 @@
+/* ============================================================
+   book-to-skill · 读书笔记站点主题
+   风格:书卷气 + 现代;纸感底色 + 墨蓝主色 + 暖琥珀点缀
+   ============================================================ */
+
+:root {
+  /* 字体:标题用衬线(书卷感),正文用无衬线(易读) */
+  --vp-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+    Helvetica, Arial, sans-serif;
+  --vp-font-family-serif: "Songti SC", "STSong", "Source Han Serif SC",
+    "Noto Serif SC", Georgia, "Times New Roman", serif;
+
+  /* 主色:墨蓝 → 紫 */
+  --vp-c-brand-1: #4f5bd5;
+  --vp-c-brand-2: #6b73e8;
+  --vp-c-brand-3: #8b91ef;
+  --vp-c-brand-light: #6b73e8;
+  --vp-c-brand-lighter: #aab0f5;
+  --vp-c-brand-dark: #3f4ac0;
+  --vp-c-brand-darker: #2f389a;
+  --vp-c-brand-soft: rgba(79, 91, 213, 0.12);
+
+  /* 纸感底色(亮色) */
+  --vp-c-bg: #fbfaf7;
+  --vp-c-bg-alt: #f4f1ea;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-divider: #e7e2d6;
+  --vp-c-divider-light: #efebe1;
+  --vp-c-text-1: #20242e;
+  --vp-c-text-2: #4c5360;
+  --vp-c-text-3: #8a8f9b;
+
+  --vp-c-accent: #d97706; /* 暖琥珀点缀 */
+}
+
+/* 暗色:沉静墨夜 */
+.dark {
+  --vp-c-brand-1: #8b91ef;
+  --vp-c-brand-2: #aab0f5;
+  --vp-c-brand-3: #c3c7fa;
+  --vp-c-brand-soft: rgba(139, 145, 239, 0.16);
+
+  --vp-c-bg: #0f1115;
+  --vp-c-bg-alt: #15181f;
+  --vp-c-bg-elv: #1a1e26;
+  --vp-c-divider: #2a2f3a;
+  --vp-c-divider-light: #232833;
+  --vp-c-text-1: #e8eaf0;
+  --vp-c-text-2: #aab2c0;
+  --vp-c-text-3: #6b7382;
+
+  --vp-c-accent: #f0a23c;
+}
+
+/* ---------- 首页 Hero(渐变标题) ---------- */
+.VPHomeHero .name,
+.VPHomeHero .text {
+  background: linear-gradient(120deg, #4f5bd5 0%, #9b5de5 55%, #f15bb5 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.VPHomeHero .tagline {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.15rem;
+  color: var(--vp-c-text-1);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+.VPHomeHero .actions .VPButton.brand {
+  background: linear-gradient(120deg, #4f5bd5, #9b5de5);
+  border: none;
+  box-shadow: 0 8px 24px rgba(79, 91, 213, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.VPHomeHero .actions .VPButton.brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(79, 91, 213, 0.36);
+}
+
+/* ---------- 首页特性卡 ---------- */
+.VPFeatures .item {
+  padding: 4px;
+}
+.VPFeature {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  background: var(--vp-c-bg-elv);
+  padding: 26px 24px;
+  height: 100%;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.VPFeature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(20, 25, 40, 0.08);
+  border-color: var(--vp-c-brand-1);
+}
+.VPFeature .title {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.1rem;
+  color: var(--vp-c-text-1);
+}
+.VPFeature .details {
+  color: var(--vp-c-text-2);
+  line-height: 1.7;
+}
+
+/* ---------- 笔记书架(首页 + 全部笔记页) ---------- */
+.shelf-wrap {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 32px 24px 56px;
+}
+.shelf-title {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.7rem;
+  text-align: center;
+  margin: 0;
+  color: var(--vp-c-text-1);
+}
+.shelf-sub {
+  text-align: center;
+  color: var(--vp-c-text-2);
+  margin: 8px 0 28px;
+  font-size: 0.95rem;
+}
+.book-shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 18px;
+}
+.book-card {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 20px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+  background: var(--vp-c-bg-elv);
+  text-decoration: none !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(20, 25, 40, 0.1);
+  border-color: var(--vp-c-brand-1);
+}
+.book-card-title {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  line-height: 1.4;
+}
+.book-card-desc {
+  margin-top: 10px;
+  font-size: 0.88rem;
+  color: var(--vp-c-text-2);
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.book-card-meta {
+  margin-top: auto;
+  padding-top: 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+}
+.book-empty {
+  color: var(--vp-c-text-2);
+  text-align: center;
+  padding: 32px;
+}
+
+/* ---------- 阅读正文(七块骨架) ---------- */
+.vp-doc {
+  line-height: 1.85;
+  font-size: 16px;
+}
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.85;
+}
+.vp-doc h1 {
+  font-family: var(--vp-font-family-serif);
+  letter-spacing: 0.01em;
+}
+.vp-doc h2 {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.5rem;
+  margin-top: 2.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--vp-c-divider);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vp-doc h2::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 1.05em;
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    var(--vp-c-brand-1),
+    var(--vp-c-brand-3)
+  );
+}
+.vp-doc h3 {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.18rem;
+  color: var(--vp-c-text-1);
+}
+.vp-doc li::marker {
+  color: var(--vp-c-brand-1);
+}
+.vp-doc a {
+  text-decoration-color: var(--vp-c-brand-3);
+}
+
+/* 顶部引文 → callout */
+.vp-doc blockquote {
+  margin: 1.2rem 0;
+  border-left: 3px solid var(--vp-c-brand-1);
+  border-radius: 0 12px 12px 0;
+  background: var(--vp-c-brand-soft);
+  padding: 14px 20px;
+  color: var(--vp-c-text-2);
+}
+.vp-doc blockquote p {
+  margin: 0;
+}
+
+/* 行内 code 暖色 */
+.vp-doc :not(pre) > code {
+  background: var(--vp-c-brand-soft);
+  color: var(--vp-c-brand-dark);
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+}
+.dark .vp-doc :not(pre) > code {
+  color: var(--vp-c-brand-2);
+}
+
+/* 导航 / 侧栏微调 */
+.VPNavBarTitle .title {
+  font-family: var(--vp-font-family-serif);
+}
+.VPSidebarItem .text {
+  font-weight: 500;
+}

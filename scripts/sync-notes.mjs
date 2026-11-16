@@ -1,0 +1,99 @@
+// 同步脚本:扫描 samples/<书名>/references/note.md,生成 site/books/<书名>.md
+// 同时产出 site/.vitepress/books.json(供首页"笔记书架"组件读取)与 site/books/index.md(全部笔记)。
+// 新增一本书只需在 samples/ 下建目录,跑一次 sync(或 dev/build 自动跑)即可上线,无需改配置。
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const repoRoot = path.resolve(__dirname, '..')
+const samplesDir = path.join(repoRoot, 'samples')
+const outDir = path.join(repoRoot, 'site', 'books')
+const booksJsonPath = path.join(repoRoot, 'site', '.vitepress', 'books.json')
+
+fs.mkdirSync(outDir, { recursive: true })
+fs.mkdirSync(path.dirname(booksJsonPath), { recursive: true })
+
+const base = process.env.VP_BASE || '/'
+
+// 极简 frontmatter 解析(支持顶层 key 与折叠标量 >- )
+function parseFrontmatter(md) {
+  const m = md.match(/^---\n([\s\S]*?)\n---/)
+  if (!m) return {}
+  const lines = m[1].split('\n')
+  const fm = {}
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const idx = line.indexOf(':')
+    if (idx === -1) continue
+    const key = line.slice(0, idx).trim()
+    let val = line.slice(idx + 1).trim()
+    if (['>-', '>', '|', '|-'].includes(val)) {
+      const block = []
+      let j = i + 1
+      while (
+        j < lines.length &&
+        (lines[j].startsWith(' ') || lines[j].startsWith('\t')) &&
+        lines[j].trim() !== ''
+      ) {
+        block.push(lines[j].trim())
+        j++
+      }
+      i = j - 1
+      fm[key] = block.join(' ').replace(/\s+/g, ' ').trim()
+      continue
+    }
+    val = val.replace(/^['"]|['"]$/g, '').trim()
+    if (val) fm[key] = val
+  }
+  return fm
+}
+
+function escapeHTML(s = '') {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+const books = []
+if (fs.existsSync(samplesDir)) {
+  for (const entry of fs.readdirSync(samplesDir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue
+    const name = entry.name
+    const notePath = path.join(samplesDir, name, 'references', 'note.md')
+    const skillPath = path.join(samplesDir, name, 'SKILL.md')
+    if (!fs.existsSync(notePath)) continue
+    const note = fs.readFileSync(notePath, 'utf8')
+    const skill = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : ''
+    const fm = parseFrontmatter(skill)
+    const title = (fm.name || name).replace(/^note-/, '')
+    const desc = fm.description || ''
+    const out = `---\ntitle: ${title}\ndescription: ${desc}\n---\n\n${note}`
+    fs.writeFileSync(path.join(outDir, `${name}.md`), out, 'utf8')
+    books.push({ name, title, desc, link: `/books/${name}` })
+  }
+}
+
+// 供组件读取的清单(链接不含 base,withBase 会在前端补)
+fs.writeFileSync(booksJsonPath, JSON.stringify(books, null, 2), 'utf8')
+
+// 全部笔记页(静态 HTML 卡片墙,链接手动加 base 以兼容 GitHub Pages)
+const cards = books.length
+  ? books
+      .map(
+        (b) => `
+      <a class="book-card" href="${base}books/${encodeURIComponent(b.name)}">
+        <div class="book-card-title">${escapeHTML(b.title)}</div>
+        ${b.desc ? `<div class="book-card-desc">${escapeHTML(b.desc)}</div>` : ''}
+        <div class="book-card-meta">阅读笔记 →</div>
+      </a>`
+      )
+      .join('')
+  : '<p class="book-empty">还没有笔记,在 <code>samples/</code> 下新增一本书试试。</p>'
+
+const indexMd = `# 全部读书笔记\n\n> 共 ${books.length} 本,由 book-to-skill 自动同步。\n\n<div class="book-shelf">${cards}\n</div>\n`
+fs.writeFileSync(path.join(outDir, 'index.md'), indexMd, 'utf8')
+
+console.log(`✓ 已同步 ${books.length} 本笔记到 site/books/`)
