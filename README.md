@@ -56,8 +56,9 @@ npm run build       # 产出 site/.vitepress/dist
 新增一本书:在 `samples/` 下建 `<书名>/references/note.md` 即可,跑 `npm run sync`(或 build/dev 会自动跑)自动上线,无需改配置。
 部署:已配好 GitHub Actions(`.github/workflows/deploy.yml`),push 到 `main` 即自动构建并发布到 GitHub Pages。
 构建命令 `cd site && npm run build`(通过 `VP_BASE=/book-to-skill/` 注入基路径),产物 `site/.vitepress/dist` 由 `actions/upload-pages-artifact` + `deploy-pages` 发布。
-**开启方式**:仓库 Settings → Pages → Source 选 **GitHub Actions**(首次推送工作流会自动跑)。
-> ⚠️ 当前仓库为私有。GitHub Free 版不支持私有库开通 Pages,需把仓库设为**公开**,或升级到 Pro/Team/Enterprise 才能正常发布。
+
+- **线上地址**:https://sl-yang-dl.github.io/book-to-skill/
+- **仓库已设为公开**(GitHub Free 版不支持私有库开通 Pages,故公开;如要改回私有需升级 Pro/Team/Enterprise)。
 
 ## 进度日志
 
@@ -71,6 +72,7 @@ npm run build       # 产出 site/.vitepress/dist
 - **2026-11-15** 远端已建:`sl-yang-dl/book-to-skill`(私有),`main` 已 push。
 - **2026-11-15** Spike 对照完成:见 `spike/comparison.md`。结论 **D7 成立**——BookToSkill 契约层只有 TITLE/SUMMARY/KEYWORD/QUESTION/EVIDENCE 且禁止模型写理解,块 5–7(与我连接/可执行/未解)是其根本无法覆盖的差异化壁垒。(注:受环境限制,BookToSkill 为契约级重建,未实时 run,覆盖度实测仍待补。)
 - **2026-11-16** 上线阅览网站:MVP 用 VitePress + `scripts/sync-notes.mjs` 自动同步 `samples/` 为站点,本地 `npm run build` 通过、首页与笔记页均 200。
+- **2026-11-16** 重做 UI(书卷气现代主题:渐变标题 / 笔记书架卡片墙 / 七块骨架色条 / 引文 callout / 暗色精致化);新增 `publisher` 技能串起"reader 产出 → 同步站点 → push → Pages 自动部署"闭环。仓库设为公开并开启 GitHub Pages,CI 部署成功,站点已上线:https://sl-yang-dl.github.io/book-to-skill/
 
 ## 待办 / 下一步
 
@@ -80,7 +82,7 @@ npm run build       # 产出 site/.vitepress/dist
 - [x] push 到远端(`sl-yang-dl/book-to-skill`,私有)
 - [x] Spike:用 zhimaAi/BookToSkill 契约对照七块骨架,验证 D7(结论:成立)
 - [x] 搭好 VitePress 在线阅览站点(自动同步 `samples/`,本地 build 通过)
-- [ ] **部署上线**:GitHub Pages —— 开启 Settings→Pages→GitHub Actions,并确保仓库公开(Free 版限制)
+- [x] **部署上线**:GitHub Pages —— 仓库已公开、Pages 已开启(GitHub Actions 来源),站点已上线
 - [ ] (可选)实时 run BookToSkill 做覆盖度实测,补全 spike 缺口
 - [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,需先解决其"标题结构丢失"的抽取问题)
 - [ ] 打通 `sl-yang-dl/skills` 的 `install.sh` 激活流程
