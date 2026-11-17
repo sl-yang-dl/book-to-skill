@@ -30,6 +30,7 @@ description: >-
    - 块 5–7 为 **综合块**,v1 先留**引导式空模板**(由读者本人填写),见决策 D6。
 3. **产出笔记 skill**:
    - `SKILL.md`(薄):frontmatter 的 `description` **写满书主题与触发场景**,让 Pi 日后能自动路由加载;
+     并补充 `tags: [主题词1, 主题词2]`(如 `[写作, 方法]`),用于在网站书架做标签筛选;
      正文只放一句话来源说明 + 指向 `references/note.md` 的指引。
    - `references/note.md`:七块骨架的完整抽取结果。
 4. **命名**:笔记 skill 目录建议用 `samples/<书名>/`。

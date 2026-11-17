@@ -24,6 +24,30 @@ const books = getBooks()
 // 由 CI 通过环境变量 VP_BASE 注入,本地无需设置。
 const base = process.env.VP_BASE || '/'
 
+// 头部注入:favicon、RSS;可选访问统计(设置 VP_ANALYTICS 才生效)
+const head = [
+  ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
+  [
+    'link',
+    {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      title: '读书笔记 RSS',
+      href: `${base}feed.xml`
+    }
+  ]
+]
+if (process.env.VP_ANALYTICS) {
+  head.push([
+    'script',
+    {
+      defer: '',
+      src: 'https://plausible.io/js/script.js',
+      'data-domain': process.env.VP_ANALYTICS
+    }
+  ])
+}
+
 const sidebar = [
   {
     text: '读书笔记',
@@ -37,12 +61,12 @@ const sidebar = [
 
 export default defineConfig({
   base,
+  head,
   title: '读书笔记 · book-to-skill',
   description: '把书变成你读得懂、还能复用的读书笔记',
   lang: 'zh-CN',
   lastUpdated: true,
   cleanUrls: true,
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },

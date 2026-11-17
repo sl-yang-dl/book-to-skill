@@ -25,10 +25,16 @@ description: >-
 ## 步骤
 
 1. **同步(生成站点内容)**:在 `site/` 目录运行 `npm run sync`。
-   它会扫描 `samples/`,生成 `site/books/<书名>.md`、`site/books/index.md` 与
-   `site/.vitepress/books.json`(首页"笔记书架"的数据源)。`site/books/` 是生成物,已被 gitignore,**勿手改/勿提交**。
+   它会扫描 `samples/`,生成 `site/books/<书名>.md`(含 prevBook/nextBook 供上一篇/下一篇导航)、
+   `site/books/index.md` 与 `site/.vitepress/books.json`(首页"笔记书架"数据源,含 tags)。
+   `site/books/` 是生成物,已被 gitignore,**勿手改/勿提交**。
+2. **生成 RSS(随构建自动)**:`npm run build` 会先跑 `sync`,再用 `scripts/gen-rss.mjs`
+   读取 `books.json` 生成 `site/public/feed.xml`(RSS 2.0,每书一条),并注入 `<link rel="alternate">` 到各页 head。
+   每本书可在 `samples/<书名>/SKILL.md` 用 `tags: [写作, 方法]` 声明标签,书架顶部出现标签胶囊筛选。
 2. **本地校验(可选)**:`npm run dev` 看 `http://localhost:5173`,或
    `npm run build && npm run preview` 预览生产构建。
+   站点已具备:书名/关键词实时筛选、标签胶囊筛选、笔记页上一篇/下一篇、标题锚点复制、
+   站内搜索命中高亮、移动端底部快捷栏、RSS 订阅(https://sl-yang-dl.github.io/book-to-skill/feed.xml)。
 3. **提交并推送**:
    ```bash
    git add -A samples site scripts .github README.md

@@ -2,6 +2,7 @@
 import DefaultTheme from 'vitepress/theme'
 import { withBase } from 'vitepress'
 import BookShelf from './BookShelf.vue'
+import NoteNav from './NoteNav.vue'
 
 const { Layout } = DefaultTheme
 const home = withBase('/')
@@ -16,6 +17,11 @@ const shelf = withBase('/books/')
         <p class="shelf-sub">每本都是按「七块骨架」抽取的读书笔记 skill。</p>
         <BookShelf />
       </div>
+    </template>
+
+    <!-- 笔记页底部:上一篇 / 下一篇 -->
+    <template #doc-after>
+      <NoteNav />
     </template>
   </Layout>
 

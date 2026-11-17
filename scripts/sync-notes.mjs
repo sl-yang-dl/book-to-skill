@@ -14,6 +14,16 @@ const booksJsonPath = path.join(repoRoot, 'site', '.vitepress', 'books.json')
 fs.mkdirSync(outDir, { recursive: true })
 fs.mkdirSync(path.dirname(booksJsonPath), { recursive: true })
 
+// 解析 tags:支持 `tags: [写作, 方法]` 或 `tags: 写作, 方法`
+function parseTags(raw) {
+  if (!raw) return []
+  return String(raw)
+    .replace(/^\[|\]$/g, '')
+    .split(',')
+    .map((t) => t.trim().replace(/^['"]|['"]$/g, ''))
+    .filter(Boolean)
+}
+
 // 极简 frontmatter 解析(支持顶层 key 与折叠标量 >- )
 function parseFrontmatter(md) {
   const m = md.match(/^---\n([\s\S]*?)\n---/)
@@ -48,6 +58,7 @@ function parseFrontmatter(md) {
 }
 
 const books = []
+const notes = {}
 if (fs.existsSync(samplesDir)) {
   for (const entry of fs.readdirSync(samplesDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue
@@ -60,11 +71,22 @@ if (fs.existsSync(samplesDir)) {
     const fm = parseFrontmatter(skill)
     const title = (fm.name || name).replace(/^note-/, '')
     const desc = fm.description || ''
-    const out = `---\ntitle: ${title}\ndescription: ${desc}\n---\n\n${note}`
-    fs.writeFileSync(path.join(outDir, `${name}.md`), out, 'utf8')
-    books.push({ name, title, desc, link: `/books/${name}` })
+    const tags = parseTags(fm.tags)
+    books.push({ name, title, desc, tags, link: `/books/${name}` })
+    notes[name] = note
   }
 }
+
+// 顺序稳定(按书名排序),保证书架、侧栏、上一篇/下一篇顺序在各机器一致
+books.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hans-CN'))
+
+// 写入各笔记页:frontmatter 附带 prevBook/nextBook(供 NoteNav 组件做上一篇/下一篇)
+books.forEach((b, i) => {
+  const prevBook = i > 0 ? books[i - 1].name : ''
+  const nextBook = i < books.length - 1 ? books[i + 1].name : ''
+  const fm = `---\ntitle: ${b.title}\ndescription: ${b.desc}\nprevBook: ${prevBook}\nnextBook: ${nextBook}\n---\n\n`
+  fs.writeFileSync(path.join(outDir, `${b.name}.md`), fm + notes[b.name], 'utf8')
+})
 
 // 供组件读取的清单(链接不含 base,withBase 会在前端补)
 fs.writeFileSync(booksJsonPath, JSON.stringify(books, null, 2), 'utf8')

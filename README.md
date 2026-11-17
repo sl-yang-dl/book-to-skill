@@ -58,7 +58,17 @@ npm run build       # 产出 site/.vitepress/dist
 构建命令 `cd site && npm run build`(通过 `VP_BASE=/book-to-skill/` 注入基路径),产物 `site/.vitepress/dist` 由 `actions/upload-pages-artifact` + `deploy-pages` 发布。
 
 - **线上地址**:https://sl-yang-dl.github.io/book-to-skill/
+- **RSS 订阅**:https://sl-yang-dl.github.io/book-to-skill/feed.xml(每本书一条,更新时间取其 note.md 修改时间)
 - **仓库已设为公开**(GitHub Free 版不支持私有库开通 Pages,故公开;如要改回私有需升级 Pro/Team/Enterprise)。
+
+### 站内功能
+
+- 读书笔记书架:首页与「全部笔记」页以卡片墙展示各书笔记,可按书名 / 关键词实时筛选。
+- 标签筛选:每本书可在 `SKILL.md` 写 `tags: [写作, 方法]`,书架顶部生成标签胶囊,点选即过滤。
+- 上一篇 / 下一篇:每篇笔记底部按书架顺序提供相邻笔记导航(由同步脚本写入 frontmatter)。
+- 锚点复制:悬停标题出现 `#`,点击复制带锚点的完整链接。
+- 站内搜索:基于标题 / 七块骨架的全文检索,命中词高亮。
+- 移动端:自带底部快捷栏(首页 / 书架),适配小屏阅读。
 
 ## 进度日志
 
@@ -73,6 +83,7 @@ npm run build       # 产出 site/.vitepress/dist
 - **2026-11-15** Spike 对照完成:见 `spike/comparison.md`。结论 **D7 成立**——BookToSkill 契约层只有 TITLE/SUMMARY/KEYWORD/QUESTION/EVIDENCE 且禁止模型写理解,块 5–7(与我连接/可执行/未解)是其根本无法覆盖的差异化壁垒。(注:受环境限制,BookToSkill 为契约级重建,未实时 run,覆盖度实测仍待补。)
 - **2026-11-16** 上线阅览网站:MVP 用 VitePress + `scripts/sync-notes.mjs` 自动同步 `samples/` 为站点,本地 `npm run build` 通过、首页与笔记页均 200。
 - **2026-11-16** 重做 UI(书卷气现代主题:渐变标题 / 笔记书架卡片墙 / 七块骨架色条 / 引文 callout / 暗色精致化);新增 `publisher` 技能串起"reader 产出 → 同步站点 → push → Pages 自动部署"闭环。仓库设为公开并开启 GitHub Pages,CI 部署成功,站点已上线:https://sl-yang-dl.github.io/book-to-skill/
+- **2026-11-16** 站点增强:(b) favicon + 搜索命中高亮;(c) 书名 / 关键词实时筛选;(d) 标题锚点复制按钮;(e) 移动端底部快捷栏;(f) 笔记页上一篇/下一篇导航;(g) 每书 `tags` 标签胶囊筛选;(h) RSS 订阅源 `feed.xml`(构建时自动生成,head 注入 `<link rel=alternate>`)。
 
 ## 待办 / 下一步
 
@@ -83,6 +94,7 @@ npm run build       # 产出 site/.vitepress/dist
 - [x] Spike:用 zhimaAi/BookToSkill 契约对照七块骨架,验证 D7(结论:成立)
 - [x] 搭好 VitePress 在线阅览站点(自动同步 `samples/`,本地 build 通过)
 - [x] **部署上线**:GitHub Pages —— 仓库已公开、Pages 已开启(GitHub Actions 来源),站点已上线
+- [x] 站点体验增强:(b)favicon+搜索高亮 (c)书名筛选 (d)锚点复制 (e)移动端快捷栏 (f)上一篇/下一篇 (g)标签筛选 (h)RSS 订阅
 - [ ] (可选)实时 run BookToSkill 做覆盖度实测,补全 spike 缺口
 - [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,需先解决其"标题结构丢失"的抽取问题)
 - [ ] 打通 `sl-yang-dl/skills` 的 `install.sh` 激活流程

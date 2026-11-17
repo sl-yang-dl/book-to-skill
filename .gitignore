@@ -23,6 +23,7 @@ site/node_modules/
 site/.vitepress/cache/
 site/.vitepress/dist/
 site/.vitepress/books.json
+site/public/feed.xml
 site/books/
 
 # logs

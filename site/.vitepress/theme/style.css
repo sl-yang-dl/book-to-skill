@@ -332,6 +332,35 @@
   box-shadow: 0 0 0 3px var(--vp-c-brand-soft);
 }
 
+/* 标签 / 分类筛选 */
+.shelf-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 0 auto 24px;
+  max-width: 640px;
+}
+.shelf-tag {
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-2);
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.shelf-tag:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-1);
+}
+.shelf-tag.active {
+  background: linear-gradient(120deg, #4f5bd5, #9b5de5);
+  border-color: transparent;
+  color: #fff;
+}
+
 /* ---------- (d) 标题锚点复制按钮 ---------- */
 .vp-doc .header-anchor {
   margin-left: -0.1em;
@@ -355,6 +384,59 @@
   opacity: 1;
   color: var(--vp-c-accent);
   background: transparent;
+}
+
+/* ---------- (f) 笔记页上一篇 / 下一篇 ---------- */
+.note-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+.note-nav-link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 14px;
+  background: var(--vp-c-bg-elv);
+  text-decoration: none !important;
+  transition: border-color 0.15s ease, transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.note-nav-link:hover {
+  border-color: var(--vp-c-brand-1);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(20, 25, 40, 0.08);
+}
+.note-nav-link.next {
+  text-align: right;
+}
+.note-nav-dir {
+  font-size: 0.78rem;
+  color: var(--vp-c-brand-1);
+}
+.note-nav-title {
+  font-family: var(--vp-font-family-serif);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+.note-nav-link.placeholder {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+@media (max-width: 640px) {
+  .note-nav {
+    grid-template-columns: 1fr;
+  }
+  .note-nav-link.next {
+    text-align: left;
+  }
 }
 
 /* ---------- (e) 移动端底部快捷栏 ---------- */
