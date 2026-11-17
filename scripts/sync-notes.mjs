@@ -24,6 +24,11 @@ function parseTags(raw) {
     .filter(Boolean)
 }
 
+// 把任意字符串安全地写成 YAML 双引号标量(转义反斜杠与双引号)
+function yamlStr(s) {
+  return '"' + String(s ?? '').replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'
+}
+
 // 极简 frontmatter 解析(支持顶层 key 与折叠标量 >- )
 function parseFrontmatter(md) {
   const m = md.match(/^---\n([\s\S]*?)\n---/)
@@ -84,7 +89,7 @@ books.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hans-CN'))
 books.forEach((b, i) => {
   const prevBook = i > 0 ? books[i - 1].name : ''
   const nextBook = i < books.length - 1 ? books[i + 1].name : ''
-  const fm = `---\ntitle: ${b.title}\ndescription: ${b.desc}\nprevBook: ${prevBook}\nnextBook: ${nextBook}\n---\n\n`
+  const fm = `---\ntitle: ${yamlStr(b.title)}\ndescription: ${yamlStr(b.desc)}\nprevBook: ${yamlStr(prevBook)}\nnextBook: ${yamlStr(nextBook)}\n---\n\n`
   fs.writeFileSync(path.join(outDir, `${b.name}.md`), fm + notes[b.name], 'utf8')
 })
 

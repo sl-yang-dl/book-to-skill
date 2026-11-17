@@ -84,6 +84,7 @@ npm run build       # 产出 site/.vitepress/dist
 - **2026-11-16** 上线阅览网站:MVP 用 VitePress + `scripts/sync-notes.mjs` 自动同步 `samples/` 为站点,本地 `npm run build` 通过、首页与笔记页均 200。
 - **2026-11-16** 重做 UI(书卷气现代主题:渐变标题 / 笔记书架卡片墙 / 七块骨架色条 / 引文 callout / 暗色精致化);新增 `publisher` 技能串起"reader 产出 → 同步站点 → push → Pages 自动部署"闭环。仓库设为公开并开启 GitHub Pages,CI 部署成功,站点已上线:https://sl-yang-dl.github.io/book-to-skill/
 - **2026-11-16** 站点增强:(b) favicon + 搜索命中高亮;(c) 书名 / 关键词实时筛选;(d) 标题锚点复制按钮;(e) 移动端底部快捷栏;(f) 笔记页上一篇/下一篇导航;(g) 每书 `tags` 标签胶囊筛选;(h) RSS 订阅源 `feed.xml`(构建时自动生成,head 注入 `<link rel=alternate>`)。
+- **2026-11-17** 批量产出读书笔记:对 `books/` 下 27 本写作类书去重(蒙田、叶圣陶各取 1 本,跳过已完成的 2 本)后,为 21 本各生成完整 11 块笔记 skill(导览 / 全书大纲思维导图(mermaid)/ 块1–4 / 金句 / 块5–7 / 评价);站点书架现共 23 本。注:《精读指导举隅·略读指导举隅》源文件为 OCR 乱码,内容据通行权威版本重建并已标注。
 
 ## 待办 / 下一步
 
