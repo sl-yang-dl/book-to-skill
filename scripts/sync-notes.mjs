@@ -95,4 +95,16 @@ fs.writeFileSync(booksJsonPath, JSON.stringify(books, null, 2), 'utf8')
 const indexMd = `# 全部读书笔记\n\n> 共 ${books.length} 本,由 book-to-skill 自动同步。\n\n<BookShelf />\n`
 fs.writeFileSync(path.join(outDir, 'index.md'), indexMd, 'utf8')
 
+// 清理残留:删除 samples/ 中已不存在的书对应的生成页(保留 index.md)。
+// 否则删一本书后,它的旧生成页会永远留在 site/books/ 里成为脏文件。
+const liveNames = new Set(books.map((b) => b.name))
+for (const f of fs.readdirSync(outDir)) {
+  if (f === 'index.md' || !f.endsWith('.md')) continue
+  const name = f.slice(0, -3)
+  if (!liveNames.has(name)) {
+    fs.rmSync(path.join(outDir, f), { force: true })
+    console.log(`  ✗ 清理残留笔记页:${f}`)
+  }
+}
+
 console.log(`✓ 已同步 ${books.length} 本笔记到 site/books/`)
