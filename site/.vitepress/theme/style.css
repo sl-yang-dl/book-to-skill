@@ -296,3 +296,110 @@
 .VPSidebarItem .text {
   font-weight: 500;
 }
+
+/* ---------- (c) 笔记书架筛选框 ---------- */
+.shelf-filter {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto 22px;
+}
+.shelf-filter-ico {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.shelf-filter-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 14px 11px 38px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-elv);
+  color: var(--vp-c-text-1);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.shelf-filter-input::placeholder {
+  color: var(--vp-c-text-3);
+}
+.shelf-filter-input:focus {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 0 0 3px var(--vp-c-brand-soft);
+}
+
+/* ---------- (d) 标题锚点复制按钮 ---------- */
+.vp-doc .header-anchor {
+  margin-left: -0.1em;
+  padding: 0 0.15em;
+  border-radius: 6px;
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+.vp-doc h1:hover .header-anchor,
+.vp-doc h2:hover .header-anchor,
+.vp-doc h3:hover .header-anchor,
+.header-anchor:focus {
+  opacity: 1;
+}
+.vp-doc .header-anchor:hover {
+  background: var(--vp-c-brand-soft);
+}
+.vp-doc .header-anchor.copied {
+  opacity: 1;
+  color: var(--vp-c-accent);
+  background: transparent;
+}
+
+/* ---------- (e) 移动端底部快捷栏 ---------- */
+.mobile-tabbar {
+  display: none;
+}
+@media (max-width: 768px) {
+  .mobile-tabbar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    background: color-mix(in srgb, var(--vp-c-bg-elv) 90%, transparent);
+    backdrop-filter: saturate(180%) blur(10px);
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    border-top: 1px solid var(--vp-c-divider);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mobile-tabbar .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0 7px;
+    color: var(--vp-c-text-2);
+    text-decoration: none;
+    font-size: 0.72rem;
+  }
+  .mobile-tabbar .tab-item .tab-ico {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+  .mobile-tabbar .tab-item:active {
+    color: var(--vp-c-brand-1);
+  }
+  /* 正文留出底部空间,避免被快捷栏遮挡 */
+  .vp-doc,
+  .VPHome {
+    padding-bottom: 72px;
+  }
+  /* 移动端隐藏返回顶部,避免与快捷栏重叠 */
+  .VPScrollToTop {
+    display: none !important;
+  }
+}

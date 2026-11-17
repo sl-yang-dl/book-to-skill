@@ -1,6 +1,7 @@
 import DefaultTheme from 'vitepress/theme'
 import Layout from './Layout.vue'
 import BookShelf from './BookShelf.vue'
+import './copy-anchor.js'
 import './style.css'
 
 export default {

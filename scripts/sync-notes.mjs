@@ -14,8 +14,6 @@ const booksJsonPath = path.join(repoRoot, 'site', '.vitepress', 'books.json')
 fs.mkdirSync(outDir, { recursive: true })
 fs.mkdirSync(path.dirname(booksJsonPath), { recursive: true })
 
-const base = process.env.VP_BASE || '/'
-
 // 极简 frontmatter 解析(支持顶层 key 与折叠标量 >- )
 function parseFrontmatter(md) {
   const m = md.match(/^---\n([\s\S]*?)\n---/)
@@ -49,14 +47,6 @@ function parseFrontmatter(md) {
   return fm
 }
 
-function escapeHTML(s = '') {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
 const books = []
 if (fs.existsSync(samplesDir)) {
   for (const entry of fs.readdirSync(samplesDir, { withFileTypes: true })) {
@@ -79,21 +69,8 @@ if (fs.existsSync(samplesDir)) {
 // 供组件读取的清单(链接不含 base,withBase 会在前端补)
 fs.writeFileSync(booksJsonPath, JSON.stringify(books, null, 2), 'utf8')
 
-// 全部笔记页(静态 HTML 卡片墙,链接手动加 base 以兼容 GitHub Pages)
-const cards = books.length
-  ? books
-      .map(
-        (b) => `
-      <a class="book-card" href="${base}books/${encodeURIComponent(b.name)}">
-        <div class="book-card-title">${escapeHTML(b.title)}</div>
-        ${b.desc ? `<div class="book-card-desc">${escapeHTML(b.desc)}</div>` : ''}
-        <div class="book-card-meta">阅读笔记 →</div>
-      </a>`
-      )
-      .join('')
-  : '<p class="book-empty">还没有笔记,在 <code>samples/</code> 下新增一本书试试。</p>'
-
-const indexMd = `# 全部读书笔记\n\n> 共 ${books.length} 本,由 book-to-skill 自动同步。\n\n<div class="book-shelf">${cards}\n</div>\n`
+// 全部笔记页:用 BookShelf 组件渲染(自带按书名筛选),数据来自 books.json
+const indexMd = `# 全部读书笔记\n\n> 共 ${books.length} 本,由 book-to-skill 自动同步。\n\n<BookShelf />\n`
 fs.writeFileSync(path.join(outDir, 'index.md'), indexMd, 'utf8')
 
 console.log(`✓ 已同步 ${books.length} 本笔记到 site/books/`)

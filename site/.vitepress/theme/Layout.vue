@@ -1,8 +1,11 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme'
+import { withBase } from 'vitepress'
 import BookShelf from './BookShelf.vue'
 
 const { Layout } = DefaultTheme
+const home = withBase('/')
+const shelf = withBase('/books/')
 </script>
 
 <template>
@@ -15,4 +18,16 @@ const { Layout } = DefaultTheme
       </div>
     </template>
   </Layout>
+
+  <!-- 移动端底部快捷栏(仅小屏显示) -->
+  <nav class="mobile-tabbar" aria-label="移动端快捷导航">
+    <a class="tab-item" :href="home">
+      <span class="tab-ico" aria-hidden="true">🏠</span>
+      <span>首页</span>
+    </a>
+    <a class="tab-item" :href="shelf">
+      <span class="tab-ico" aria-hidden="true">📚</span>
+      <span>书架</span>
+    </a>
+  </nav>
 </template>
