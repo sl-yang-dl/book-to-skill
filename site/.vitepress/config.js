@@ -42,13 +42,24 @@ export default defineConfig({
   lang: 'zh-CN',
   lastUpdated: true,
   cleanUrls: true,
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }]],
   themeConfig: {
     nav: [
       { text: '首页', link: '/' },
       { text: '全部笔记', link: '/books/' }
     ],
     sidebar,
-    search: { provider: 'local' },
+    search: {
+      provider: 'local',
+      options: {
+        // 搜索结果展示上下文片段,并高亮命中词
+        detail: true,
+        miniSearch: {
+          // 中文按字/词更友好:去掉默认英文分词,整体匹配
+          searchOptions: { prefix: true, fuzzy: 0.2 }
+        }
+      }
+    },
     outline: { level: [2, 3] },
     docFooter: { prev: false, next: false },
     returnToTopLabel: '回到顶部',

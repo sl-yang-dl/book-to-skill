@@ -249,6 +249,46 @@
   color: var(--vp-c-brand-2);
 }
 
+/* 搜索命中词高亮 */
+.vp-doc mark,
+.VPLocalSearch mark {
+  background: linear-gradient(transparent 62%, rgba(217, 119, 6, 0.35) 0);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* 从搜索/目录跳转后的标题高亮动画 */
+.vp-doc :target {
+  scroll-margin-top: 84px;
+  animation: target-flash 1.8s ease;
+}
+.vp-doc :target::before {
+  background: linear-gradient(
+    180deg,
+    var(--vp-c-brand-1),
+    var(--vp-c-brand-3)
+  );
+}
+@keyframes target-flash {
+  0% {
+    background: var(--vp-c-brand-soft);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* 搜索框与本地搜索弹窗微调 */
+.VPNavBarSearch .DocSearch-Button,
+.VPNavBarSearch .search-box input {
+  border-radius: 10px;
+}
+.VPLocalSearch {
+  --vp-local-search-bg: var(--vp-c-bg);
+  --vp-local-search-result-bg: var(--vp-c-bg-elv);
+}
+
 /* 导航 / 侧栏微调 */
 .VPNavBarTitle .title {
   font-family: var(--vp-font-family-serif);
