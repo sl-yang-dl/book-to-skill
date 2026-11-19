@@ -3,12 +3,34 @@ import { ref, computed, watch } from 'vue'
 import { withBase } from 'vitepress'
 import books from '../books.json'
 
-const PAGE = 60 // 每批渲染数量,避免千本时一次性渲染全部 DOM
+const PAGE = 60
 const query = ref('')
 const activeTag = ref('')
 const shelfExpanded = ref(false)
-const visible = ref(PAGE)
+const page = ref(1)
 
+// 作者维度特殊处理:统计热度 + 搜索,避免千本时作者按钮爆炸
+const authorQuery = ref('')
+const authorExpanded = ref(false)
+const authorCounts = computed(() => {
+  const m = {}
+  books.forEach((b) => (b.tags?.author || []).forEach((a) => { m[a] = (m[a] || 0) + 1 }))
+  return m
+})
+const allAuthors = computed(() =>
+  Object.keys(authorCounts.value).sort(
+    (a, b) => authorCounts.value[b] - authorCounts.value[a] || a.localeCompare(b, 'zh-Hans-CN')
+  )
+)
+const authorList = computed(() => {
+  const q = authorQuery.value.trim().toLowerCase()
+  let list = allAuthors.value
+  if (q) list = list.filter((a) => a.toLowerCase().includes(q))
+  else if (!authorExpanded.value) list = list.slice(0, 8)
+  return list
+})
+
+// 卡片标签用三维;筛选栏只用主题/文体(作者单独渲染)
 const CATS = [
   { key: 'theme', label: '主题' },
   { key: 'genre', label: '文体' },
@@ -24,13 +46,12 @@ function bookHasTag(b, active) {
   return (b.tags?.[cat] || []).includes(val)
 }
 
-// 按分类收集去重标签,用于筛选栏
-const tagGroups = computed(() => {
-  const g = { author: new Set(), genre: new Set(), theme: new Set() }
+const catGroups = computed(() => {
+  const g = { theme: new Set(), genre: new Set() }
   books.forEach((b) => {
-    CATS.forEach(({ key }) => (b.tags?.[key] || []).forEach((t) => g[key].add(t)))
+    ['theme', 'genre'].forEach((k) => (b.tags?.[k] || []).forEach((t) => g[k].add(t)))
   })
-  return CATS.map(({ key, label }) => ({
+  return CATS.filter((c) => c.key !== 'author').map(({ key, label }) => ({
     key,
     label,
     items: [...g[key]].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
@@ -49,17 +70,34 @@ const filtered = computed(() => {
   })
 })
 
-// 只渲染当前批次,千本时分批显示
-const shown = computed(() => filtered.value.slice(0, visible.value))
-const hasMore = computed(() => visible.value < filtered.value.length)
+const totalPages = computed(() => Math.max(1, Math.ceil(filtered.value.length / PAGE)))
+const shown = computed(() =>
+  filtered.value.slice((page.value - 1) * PAGE, page.value * PAGE)
+)
 
-function loadMore() {
-  visible.value = Math.min(visible.value + PAGE, filtered.value.length)
+// 页码(少于等于 7 页全显示,否则首尾 + 当前附近 + 省略号)
+const pageItems = computed(() => {
+  const t = totalPages.value
+  const cur = page.value
+  if (t <= 7) return Array.from({ length: t }, (_, i) => i + 1)
+  const items = [1]
+  const start = Math.max(2, cur - 1)
+  const end = Math.min(t - 1, cur + 1)
+  if (start > 2) items.push('...')
+  for (let i = start; i <= end; i++) items.push(i)
+  if (end < t - 1) items.push('...')
+  items.push(t)
+  return items
+})
+
+function go(p) {
+  page.value = Math.min(Math.max(1, p), totalPages.value)
+  if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// 搜索 / 切换标签时回到第一批
-watch([query, activeTag], () => {
-  visible.value = PAGE
+// 搜索 / 切换标签 / 搜索作者 → 回到第 1 页
+watch([query, activeTag, authorQuery], () => {
+  page.value = 1
 })
 
 function setTag(cat, val) {
@@ -81,7 +119,7 @@ function setTag(cat, val) {
   </div>
 
   <div class='shelf-tags' :class='{ expanded: shelfExpanded }'>
-    <div v-for='grp in tagGroups' :key='grp.key' class='shelf-tag-group'>
+    <div v-for='grp in catGroups' :key='grp.key' class='shelf-tag-group'>
       <span class='shelf-tag-group-label'>{{ grp.label }}</span>
       <button
         v-for='t in grp.items'
@@ -93,9 +131,29 @@ function setTag(cat, val) {
         {{ t }}
       </button>
     </div>
+    <div class='shelf-tag-group shelf-tag-group-author'>
+      <span class='shelf-tag-group-label'>作者</span>
+      <input v-model='authorQuery' class='author-search' type='search' placeholder='搜索作者…' />
+      <button
+        v-for='a in authorList'
+        :key='a'
+        class='shelf-tag'
+        :class='{ active: activeTag === "author:" + a }'
+        @click='setTag("author", a)'
+      >
+        {{ a }}
+      </button>
+      <button
+        v-if='!authorQuery && allAuthors.length > 8'
+        class='shelf-tag-more-inline'
+        @click='authorExpanded = !authorExpanded'
+      >
+        {{ authorExpanded ? '收起' : '更多作者' }}
+      </button>
+    </div>
   </div>
   <button
-    v-if='tagGroups.some((g) => g.items.length)'
+    v-if='catGroups.some((g) => g.items.length) || allAuthors.length'
     class='shelf-tag-more'
     @click='shelfExpanded = !shelfExpanded'
   >
@@ -137,9 +195,23 @@ function setTag(cat, val) {
     </p>
   </div>
 
-  <div v-if='hasMore' class='shelf-loadmore-wrap'>
-    <button class='shelf-loadmore' @click='loadMore'>
-      加载更多 · 还剩 {{ filtered.length - visible }} 本
-    </button>
+  <div v-if='totalPages > 1' class='shelf-pager'>
+    <button class='pager-btn' :disabled='page <= 1' @click='go(page - 1)'>← 上一页</button>
+    <div class='pager-pages'>
+      <button
+        v-for='p in pageItems'
+        :key='p'
+        class='pager-num'
+        :class='{ active: p === page, gap: p === "..." }'
+        :disabled='p === "..."'
+        @click='typeof p === "number" && go(p)'
+      >
+        {{ p }}
+      </button>
+    </div>
+    <button class='pager-btn' :disabled='page >= totalPages' @click='go(page + 1)'>下一页 →</button>
+  </div>
+  <div v-if='totalPages > 1' class='shelf-pager-info'>
+    共 {{ filtered.length }} 本 · 第 {{ page }} / {{ totalPages }} 页
   </div>
 </template>
