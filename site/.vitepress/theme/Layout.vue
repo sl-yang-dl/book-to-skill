@@ -1,10 +1,11 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme'
-import { withBase } from 'vitepress'
+import { withBase, useData } from 'vitepress'
 import BookShelf from './BookShelf.vue'
 import NoteNav from './NoteNav.vue'
 
 const { Layout } = DefaultTheme
+const { frontmatter } = useData()
 const home = withBase('/')
 const shelf = withBase('/books/')
 </script>
@@ -20,6 +21,14 @@ const shelf = withBase('/books/')
     </template>
 
     <!-- 笔记页底部:上一篇 / 下一篇 -->
+    <template #doc-before>
+      <img
+        v-if="frontmatter.cover"
+        :src="withBase(frontmatter.cover)"
+        :alt="(frontmatter.title || '') + ' 封面'"
+        class="book-cover"
+      />
+    </template>
     <template #doc-after>
       <NoteNav />
     </template>

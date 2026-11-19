@@ -148,6 +148,16 @@
   box-shadow: 0 16px 36px rgba(20, 25, 40, 0.1);
   border-color: var(--vp-c-brand-1);
 }
+
+.book-card-cover {
+  width: calc(100% + 40px);
+  margin: -22px -20px 16px;
+  height: 190px;
+  object-fit: cover;
+  background: var(--vp-c-bg-mute);
+  display: block;
+}
+
 .book-card-title {
   font-family: var(--vp-font-family-serif);
   font-size: 1.18rem;
@@ -176,6 +186,16 @@
   color: var(--vp-c-text-2);
   text-align: center;
   padding: 32px;
+}
+
+.book-cover {
+  display: block;
+  max-width: 200px;
+  width: auto;
+  height: auto;
+  margin: 0 auto 26px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(20, 25, 40, 0.14);
 }
 
 /* ---------- 阅读正文(七块骨架) ---------- */

@@ -25,6 +25,10 @@ site/.vitepress/dist/
 site/.vitepress/books.json
 site/public/feed.xml
 site/books/
+# 封面:由 sync-notes.mjs 从 samples/<书名>/cover.jpg 复制生成(源在 samples/ 入库)
+site/public/covers/
+# 封面抓取核对报告(fetch-covers.mjs 生成)
+covers-report.json
 
 # logs
 *.log

@@ -9,9 +9,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(__dirname, '..')
 const samplesDir = path.join(repoRoot, 'samples')
 const outDir = path.join(repoRoot, 'site', 'books')
+const coversDir = path.join(repoRoot, 'site', 'public', 'covers')
 const booksJsonPath = path.join(repoRoot, 'site', '.vitepress', 'books.json')
 
 fs.mkdirSync(outDir, { recursive: true })
+fs.mkdirSync(coversDir, { recursive: true })
 fs.mkdirSync(path.dirname(booksJsonPath), { recursive: true })
 
 // 解析 tags:支持 `tags: [写作, 方法]` 或 `tags: 写作, 方法`
@@ -77,7 +79,18 @@ if (fs.existsSync(samplesDir)) {
     const title = (fm.name || name).replace(/^note-/, '')
     const desc = fm.description || ''
     const tags = parseTags(fm.tags)
-    books.push({ name, title, desc, tags, link: `/books/${name}` })
+    // 封面:支持 samples/<书名>/cover.{jpg,png,webp},同步到 site/public/covers/
+    let cover = ''
+    for (const ext of ['jpg', 'png', 'webp']) {
+      const src = path.join(samplesDir, name, `cover.${ext}`)
+      if (fs.existsSync(src)) {
+        const dest = path.join(coversDir, `${name}.${ext}`)
+        fs.copyFileSync(src, dest)
+        cover = `/covers/${name}.${ext}`
+        break
+      }
+    }
+    books.push({ name, title, desc, tags, link: `/books/${name}`, cover })
     notes[name] = note
   }
 }
@@ -89,7 +102,8 @@ books.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hans-CN'))
 books.forEach((b, i) => {
   const prevBook = i > 0 ? books[i - 1].name : ''
   const nextBook = i < books.length - 1 ? books[i + 1].name : ''
-  const fm = `---\ntitle: ${yamlStr(b.title)}\ndescription: ${yamlStr(b.desc)}\nprevBook: ${yamlStr(prevBook)}\nnextBook: ${yamlStr(nextBook)}\n---\n\n`
+  const coverLine = b.cover ? `cover: ${yamlStr(b.cover)}\n` : ''
+  const fm = `---\ntitle: ${yamlStr(b.title)}\ndescription: ${yamlStr(b.desc)}\nprevBook: ${yamlStr(prevBook)}\nnextBook: ${yamlStr(nextBook)}\n${coverLine}---\n\n`
   fs.writeFileSync(path.join(outDir, `${b.name}.md`), fm + notes[b.name], 'utf8')
 })
 
@@ -113,3 +127,12 @@ for (const f of fs.readdirSync(outDir)) {
 }
 
 console.log(`✓ 已同步 ${books.length} 本笔记到 site/books/`)
+
+// 清理 covers/ 里已不存在书的封面(书被删除后,旧封面不应残留)
+for (const f of fs.readdirSync(coversDir)) {
+  const base = f.replace(/\.[^.]+$/, '')
+  if (!liveNames.has(base)) {
+    fs.rmSync(path.join(coversDir, f), { force: true })
+    console.log(`  ✗ 清理残留封面:${f}`)
+  }
+}

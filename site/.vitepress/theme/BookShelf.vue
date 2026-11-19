@@ -63,6 +63,13 @@ const filtered = computed(() => {
       class="book-card"
       :href="withBase(b.link)"
     >
+      <img
+        v-if="b.cover"
+        :src="withBase(b.cover)"
+        :alt="b.title + ' 封面'"
+        class="book-card-cover"
+        loading="lazy"
+      />
       <div class="book-card-title">{{ b.title }}</div>
       <div v-if="b.desc" class="book-card-desc">{{ b.desc }}</div>
       <div class="book-card-meta">阅读笔记 →</div>
