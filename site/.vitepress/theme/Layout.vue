@@ -14,8 +14,6 @@ const shelf = withBase('/books/')
   <Layout>
     <template #home-features-after>
       <div class="shelf-wrap">
-        <h2 class="shelf-title">笔记书架</h2>
-        <p class="shelf-sub">每本都是按「七块骨架」抽取的读书笔记 skill。</p>
         <BookShelf />
       </div>
     </template>
