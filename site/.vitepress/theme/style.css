@@ -206,6 +206,26 @@
   padding: 32px;
 }
 
+.shelf-loadmore-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 36px;
+}
+.shelf-loadmore {
+  font-size: 0.9rem;
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg-elv);
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  padding: 9px 22px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.shelf-loadmore:hover {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 6px 18px rgba(79, 91, 213, 0.16);
+}
+
 .book-cover {
   display: block;
   max-width: 200px;

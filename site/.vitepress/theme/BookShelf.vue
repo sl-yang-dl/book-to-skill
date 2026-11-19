@@ -1,11 +1,13 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { withBase } from 'vitepress'
 import books from '../books.json'
 
+const PAGE = 60 // 每批渲染数量,避免千本时一次性渲染全部 DOM
 const query = ref('')
-const activeTag = ref('') // 形如 "theme:语文教育"
-const shelfExpanded = ref(false) // 筛选栏默认折叠,点击展开
+const activeTag = ref('')
+const shelfExpanded = ref(false)
+const visible = ref(PAGE)
 
 const CATS = [
   { key: 'theme', label: '主题' },
@@ -45,6 +47,19 @@ const filtered = computed(() => {
       (b.desc || '').toLowerCase().includes(q)
     return tagOk && qOk
   })
+})
+
+// 只渲染当前批次,千本时分批显示
+const shown = computed(() => filtered.value.slice(0, visible.value))
+const hasMore = computed(() => visible.value < filtered.value.length)
+
+function loadMore() {
+  visible.value = Math.min(visible.value + PAGE, filtered.value.length)
+}
+
+// 搜索 / 切换标签时回到第一批
+watch([query, activeTag], () => {
+  visible.value = PAGE
 })
 
 function setTag(cat, val) {
@@ -89,7 +104,7 @@ function setTag(cat, val) {
 
   <div class='book-shelf'>
     <a
-      v-for='b in filtered'
+      v-for='b in shown'
       :key='b.name'
       class='book-card'
       :href='withBase(b.link)'
@@ -120,5 +135,11 @@ function setTag(cat, val) {
     <p v-if='!filtered.length' class='book-empty'>
       没有匹配的笔记,换个关键词或标签试试。
     </p>
+  </div>
+
+  <div v-if='hasMore' class='shelf-loadmore-wrap'>
+    <button class='shelf-loadmore' @click='loadMore'>
+      加载更多 · 还剩 {{ filtered.length - visible }} 本
+    </button>
   </div>
 </template>
