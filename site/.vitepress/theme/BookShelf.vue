@@ -102,7 +102,7 @@ function setTag(cat, val) {
         loading='lazy'
       />
       <div class='book-card-body'>
-        <div class='book-card-title'>{{ b.title }}</div>
+        <div class='book-card-title'>{{ b.title }}<span class='book-card-arrow' aria-hidden='true'>→</span></div>
         <div v-if='b.desc' class='book-card-desc'>{{ b.desc }}</div>
         <div v-if='b.tags' class='book-card-tags'>
           <template v-for='cat in CATS' :key='cat.key'>
@@ -116,7 +116,6 @@ function setTag(cat, val) {
             </span>
           </template>
         </div>
-        <div class='book-card-meta'>阅读笔记 →</div>
       </div>
     </a>
     <p v-if='!filtered.length' class='book-empty'>

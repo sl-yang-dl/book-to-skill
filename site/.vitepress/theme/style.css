@@ -170,6 +170,10 @@
   gap: 8px;
 }
 .book-card-title {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
   font-family: var(--vp-font-family-serif);
   font-size: 1.06rem;
   font-weight: 700;
@@ -186,12 +190,15 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.book-card-meta {
-  margin-top: auto;
-  padding-top: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
+.book-card-arrow {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: var(--vp-c-text-3);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.book-card:hover .book-card-arrow {
   color: var(--vp-c-brand-1);
+  transform: translateX(3px);
 }
 .book-empty {
   color: var(--vp-c-text-2);
