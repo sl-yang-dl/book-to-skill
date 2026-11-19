@@ -79,6 +79,10 @@ if (fs.existsSync(samplesDir)) {
     const title = (fm.name || name).replace(/^note-/, '')
     const desc = fm.description || ''
     const tags = parseTagsObject(skill) || { author: [], genre: [], theme: [] }
+    // 全集/系列支持:series(系列名) + volume(卷次) + overview(是否为总览页)
+    const series = normSeries(fm.series)
+    const volume = fm.volume ? Number(fm.volume) : null
+    const overview = String(fm.overview || '').toLowerCase() === 'true'
     // 封面:支持 samples/<书名>/cover.{jpg,png,webp},同步到 site/public/covers/
     let cover = ''
     for (const ext of ['jpg', 'png', 'webp']) {
@@ -90,13 +94,36 @@ if (fs.existsSync(samplesDir)) {
         break
       }
     }
-    books.push({ name, title, desc, tags, link: `/books/${name}`, cover })
+    books.push({ name, title, desc, tags, link: `/books/${name}`, cover, series, volume, overview })
     notes[name] = note
   }
 }
 
-// 顺序稳定(按书名排序),保证书架、侧栏、上一篇/下一篇顺序在各机器一致
-books.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hans-CN'))
+// 顺序稳定:同系列相邻、总览在前、册按卷次;无系列的单本仍按书名排序
+books.sort((a, b) => {
+  const sa = a.series || '￿'
+  const sb = b.series || '￿'
+  if (sa !== sb) return sa.localeCompare(sb, 'zh-Hans-CN')
+  if (a.overview !== b.overview) return a.overview ? -1 : 1
+  return (a.volume ?? 0) - (b.volume ?? 0) || a.title.localeCompare(b.title, 'zh-Hans-CN')
+})
+
+// 系列聚合:把同 series 的册归到总览笔记,自动注入「本全集各册」目录;总览卡无封面时借用首册封面
+const seriesMap = {}
+for (const b of books) {
+  if (b.series && !b.overview) (seriesMap[b.series] ||= []).push(b)
+}
+for (const b of books) {
+  if (b.overview && b.series) {
+    const items = (seriesMap[b.series] || []).slice().sort(
+      (a, c) => (a.volume ?? 999) - (c.volume ?? 999) || a.title.localeCompare(c.title, 'zh-Hans-CN')
+    )
+    if (items.length) {
+      notes[b.name] = injectSeriesToc(notes[b.name], items)
+      if (!b.cover && items[0].cover) b.cover = items[0].cover
+    }
+  }
+}
 
 // 写入各笔记页:frontmatter 附带 prevBook/nextBook(供 NoteNav 组件做上一篇/下一篇)
 books.forEach((b, i) => {
@@ -164,4 +191,27 @@ function parseTagsObject(md) {
     inTags = false
   }
   return tags
+}
+
+// 归一化 series:支持 `series: 鲁迅全集` 或 `series: [鲁迅全集]`(取首项)
+function normSeries(v) {
+  if (v === undefined || v === null || v === '') return ''
+  let s = String(v).trim()
+  if (s.startsWith('[') && s.endsWith(']')) {
+    s = s.slice(1, -1).split(',').map((x) => x.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)[0] || ''
+  }
+  return s
+}
+
+// 把同系列各册注入总览笔记(锚点 `## 本全集各册`;已存在则刷新,否则追加到文末)
+function injectSeriesToc(note, items) {
+  const heading = '## 本全集各册'
+  const list = items
+    .map((it) => `- [《${it.title}》](/books/${it.name}) — ${it.desc || ''}`)
+    .join('\n')
+  const block = `${heading}\n\n${list}\n`
+  if (note.includes(heading)) {
+    return note.replace(/(## 本全集各册[\s\S]*?)(\n## |$)/m, (_m, _g1, tail) => block + (tail || ''))
+  }
+  return note.replace(/\s*$/, '') + '\n\n' + block
 }

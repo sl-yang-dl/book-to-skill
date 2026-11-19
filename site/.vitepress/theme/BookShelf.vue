@@ -29,9 +29,10 @@ const authorList = computed(() =>
 const CATS = [
   { key: 'theme', label: '主题' },
   { key: 'genre', label: '文体' },
-  { key: 'author', label: '作者' }
+  { key: 'author', label: '作者' },
+  { key: 'series', label: '系列' }
 ]
-const CAT_LABEL = { author: '作者', genre: '文体', theme: '主题' }
+const CAT_LABEL = { author: '作者', genre: '文体', theme: '主题', series: '系列' }
 
 function bookHasTag(b, active) {
   if (!active) return true
@@ -42,9 +43,10 @@ function bookHasTag(b, active) {
 }
 
 const catGroups = computed(() => {
-  const g = { theme: new Set(), genre: new Set() }
+  const g = { theme: new Set(), genre: new Set(), series: new Set() }
   books.forEach((b) => {
     ['theme', 'genre'].forEach((k) => (b.tags?.[k] || []).forEach((t) => g[k].add(t)))
+    if (b.series) g.series.add(b.series)
   })
   return CATS.filter((c) => c.key !== 'author').map(({ key, label }) => ({
     key,
@@ -99,6 +101,9 @@ watch([query, activeTag], () => {
 function setTag(cat, val) {
   const id = cat + ':' + val
   activeTag.value = activeTag.value === id ? '' : id
+}
+function seriesCount(s) {
+  return books.filter((x) => x.series === s && !x.overview).length
 }
 </script>
 
@@ -160,6 +165,7 @@ function setTag(cat, val) {
       v-for='b in shown'
       :key='b.name'
       class='book-card'
+      :class='{ overview: b.overview }'
       :href='withBase(b.link)'
     >
       <img
@@ -170,9 +176,13 @@ function setTag(cat, val) {
       />
       <div class='book-card-body'>
         <div class='book-card-title'>{{ b.title }}</div>
+        <div v-if='b.series' class='book-card-series'>
+          <template v-if='b.overview'>共 {{ seriesCount(b.series) }} 册</template>
+          <template v-else>{{ b.series }}<span v-if='b.volume'> · 第 {{ b.volume }} 卷</span></template>
+        </div>
         <div v-if='b.desc' class='book-card-desc'>{{ b.desc }}</div>
         <div v-if='b.tags' class='book-card-tags'>
-          <template v-for='cat in CATS' :key='cat.key'>
+          <template v-for='cat in CATS.filter((c) => c.key !== "series")' :key='cat.key'>
             <span
               v-for='t in (b.tags[cat.key] || [])'
               :key='cat.key + t'

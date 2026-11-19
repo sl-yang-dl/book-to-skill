@@ -283,6 +283,25 @@
   text-decoration: underline;
 }
 
+/* ---------- 系列 / 全集 ---------- */
+.book-card-series {
+  font-size: 0.76rem;
+  color: var(--vp-c-text-3);
+  margin-top: 2px;
+}
+.book-card.overview {
+  border-color: var(--vp-c-brand-1);
+  box-shadow: 0 6px 20px rgba(79, 91, 213, 0.14);
+}
+.tag-series {
+  border-color: rgba(14, 165, 233, 0.45);
+  color: #0ea5e9;
+  background: rgba(14, 165, 233, 0.08);
+}
+.tag-series .tag-cat {
+  color: #0ea5e9;
+}
+
 .book-cover {
   display: block;
   max-width: 200px;

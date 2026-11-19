@@ -99,3 +99,58 @@ npm run build       # 产出 site/.vitepress/dist
 - [ ] (可选)实时 run BookToSkill 做覆盖度实测,补全 spike 缺口
 - [ ] 挑第 2 本验证书(建议《一本小小的红色写作书》,需先解决其"标题结构丢失"的抽取问题)
 - [ ] 打通 `sl-yang-dl/skills` 的 `install.sh` 激活流程
+
+## 如何整理「全集 / 系列」笔记
+
+除单本书外,本工作流也支持**多卷全集、多册丛书、文学史套书**等成系列笔记。原则:每一册仍是独立的一本笔记(独立卡片、可单独读/搜/翻页),再用 `series` 维度把同系列各册聚合成一个整体,并自动生成「总览页」。
+
+### 目录结构
+
+每册照常建目录,frontmatter 加 `series`(系列名)与 `volume`(卷次,可选):
+
+```
+samples/
+  鲁迅全集/SKILL.md            # 总览页(overview: true)
+  鲁迅全集/references/note.md
+  鲁迅全集·第1卷/SKILL.md     # 册:series=鲁迅全集, volume=1
+  鲁迅全集·第2卷/SKILL.md     # 册:series=鲁迅全集, volume=2
+  中国文学史·卷一/SKILL.md    # 另一个系列
+```
+
+### SKILL.md 写法
+
+册(普通一本):
+
+```yaml
+---
+name: 鲁迅全集·第1卷
+description: 小说卷,含《呐喊》《彷徨》等。
+tags:
+  author: [鲁迅]
+  genre: [小说]
+  theme: [文学]
+series: 鲁迅全集
+volume: 1
+---
+```
+
+总览页(`overview: true`,各册目录由 sync 自动填入,无需手列):
+
+```yaml
+---
+name: 鲁迅全集
+description: 鲁迅全集总览,共 15 卷。
+tags:
+  author: [鲁迅]
+  genre: []
+  theme: [文学]
+series: 鲁迅全集
+overview: true
+---
+```
+
+### 自动发生了什么
+
+- `npm run sync` 后,书架筛选栏多出**「系列」**分组;同系列各册在卡片上显示 `系列名 · 第 N 卷` 角标,总览卡高亮并显示「共 N 册」。
+- 总览页自动注入 `## 本全集各册` 区块,按卷次列出所有册的链接。你只需在 note 里写总览性文字;若想手动控制,保留 `## 本全集各册` 标题,sync 每次会刷新其下的目录。
+- 在书架点「系列」下的系列名,即可筛出该套全集的全部册与总览。
