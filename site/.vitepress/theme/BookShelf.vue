@@ -95,9 +95,8 @@ function setTag(cat, val) {
       :href='withBase(b.link)'
     >
       <img
-        v-if='b.cover'
-        :src='withBase(b.cover)'
-        :alt='b.title + " 封面"'
+        :src='b.cover ? withBase(b.cover) : withBase("/placeholder.svg")'
+        :alt='b.title'
         class='book-card-cover'
         loading='lazy'
       />
