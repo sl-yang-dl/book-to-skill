@@ -10,7 +10,6 @@ const shelfExpanded = ref(false)
 const page = ref(1)
 
 // 作者维度特殊处理:统计热度 + 搜索,避免千本时作者按钮爆炸
-const authorQuery = ref('')
 const authorExpanded = ref(false)
 const authorCounts = computed(() => {
   const m = {}
@@ -22,13 +21,9 @@ const allAuthors = computed(() =>
     (a, b) => authorCounts.value[b] - authorCounts.value[a] || a.localeCompare(b, 'zh-Hans-CN')
   )
 )
-const authorList = computed(() => {
-  const q = authorQuery.value.trim().toLowerCase()
-  let list = allAuthors.value
-  if (q) list = list.filter((a) => a.toLowerCase().includes(q))
-  else if (!authorExpanded.value) list = list.slice(0, 8)
-  return list
-})
+const authorList = computed(() =>
+  !authorExpanded.value ? allAuthors.value.slice(0, 8) : allAuthors.value
+)
 
 // 卡片标签用三维;筛选栏只用主题/文体(作者单独渲染)
 const CATS = [
@@ -65,7 +60,8 @@ const filtered = computed(() => {
     const qOk =
       !q ||
       b.title.toLowerCase().includes(q) ||
-      (b.desc || '').toLowerCase().includes(q)
+      (b.desc || '').toLowerCase().includes(q) ||
+      (b.tags?.author || []).some((a) => a.toLowerCase().includes(q))
     return tagOk && qOk
   })
 })
@@ -96,7 +92,7 @@ function go(p) {
 }
 
 // 搜索 / 切换标签 / 搜索作者 → 回到第 1 页
-watch([query, activeTag, authorQuery], () => {
+watch([query, activeTag], () => {
   page.value = 1
 })
 
@@ -113,7 +109,7 @@ function setTag(cat, val) {
       v-model='query'
       class='shelf-filter-input'
       type='search'
-      placeholder='按书名 / 关键词 / 作者筛选笔记…'
+      placeholder='按书名 / 作者 / 关键词搜索笔记…'
       aria-label='按书名筛选笔记'
     />
   </div>
@@ -133,7 +129,6 @@ function setTag(cat, val) {
     </div>
     <div class='shelf-tag-group shelf-tag-group-author'>
       <span class='shelf-tag-group-label'>作者</span>
-      <input v-model='authorQuery' class='author-search' type='search' placeholder='搜索作者…' />
       <button
         v-for='a in authorList'
         :key='a'

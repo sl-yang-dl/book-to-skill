@@ -281,19 +281,6 @@
 }
 
 /* ---------- 作者搜索 ---------- */
-.author-search {
-  font-size: 0.8rem;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg-elv);
-  color: var(--vp-c-text-1);
-  outline: none;
-}
-.author-search:focus {
-  border-color: var(--vp-c-brand-1);
-}
 .shelf-tag-more-inline {
   font-size: 0.78rem;
   color: var(--vp-c-brand-1);
