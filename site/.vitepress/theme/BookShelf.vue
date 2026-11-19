@@ -101,21 +101,23 @@ function setTag(cat, val) {
         class='book-card-cover'
         loading='lazy'
       />
-      <div class='book-card-title'>{{ b.title }}</div>
-      <div v-if='b.desc' class='book-card-desc'>{{ b.desc }}</div>
-      <div v-if='b.tags' class='book-card-tags'>
-        <template v-for='cat in CATS' :key='cat.key'>
-          <span
-            v-for='t in (b.tags[cat.key] || [])'
-            :key='cat.key + t'
-            class='tag-chip'
-            :class="'tag-' + cat.key"
-          >
-            <span class='tag-cat'>{{ CAT_LABEL[cat.key] }}</span>{{ t }}
-          </span>
-        </template>
+      <div class='book-card-body'>
+        <div class='book-card-title'>{{ b.title }}</div>
+        <div v-if='b.desc' class='book-card-desc'>{{ b.desc }}</div>
+        <div v-if='b.tags' class='book-card-tags'>
+          <template v-for='cat in CATS' :key='cat.key'>
+            <span
+              v-for='t in (b.tags[cat.key] || [])'
+              :key='cat.key + t'
+              class='tag-chip'
+              :class="'tag-' + cat.key"
+            >
+              <span class='tag-cat'>{{ CAT_LABEL[cat.key] }}</span>{{ t }}
+            </span>
+          </template>
+        </div>
+        <div class='book-card-meta'>阅读笔记 →</div>
       </div>
-      <div class='book-card-meta'>阅读笔记 →</div>
     </a>
     <p v-if='!filtered.length' class='book-empty'>
       没有匹配的笔记,换个关键词或标签试试。
