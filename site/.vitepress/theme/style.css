@@ -191,6 +191,8 @@
   overflow: hidden;
 }
 .book-card-arrow {
+  margin-left: auto;
+  flex-shrink: 0;
   font-size: 0.95rem;
   font-weight: 400;
   color: var(--vp-c-text-3);
