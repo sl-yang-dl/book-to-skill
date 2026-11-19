@@ -356,10 +356,30 @@
 .shelf-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px 10px;
   justify-content: center;
-  margin: 0 auto 24px;
-  max-width: 640px;
+  margin: 0 auto 8px;
+  max-width: 880px;
+  max-height: 74px;
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.25s ease;
+}
+.shelf-tags.expanded {
+  max-height: 540px;
+}
+.shelf-tags::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, transparent, var(--vp-c-bg));
+  pointer-events: none;
+}
+.shelf-tags.expanded::after {
+  display: none;
 }
 .shelf-tag {
   border: 1px solid var(--vp-c-divider);
@@ -379,6 +399,71 @@
   background: linear-gradient(120deg, #4f5bd5, #9b5de5);
   border-color: transparent;
   color: #fff;
+}
+
+.shelf-tag-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.shelf-tag-group-label {
+  font-size: 0.72rem;
+  color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-alt);
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin-right: 2px;
+}
+.shelf-tag-more {
+  display: block;
+  margin: 0 auto 22px;
+  font-size: 0.8rem;
+  color: var(--vp-c-brand-1);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+.shelf-tag-more:hover {
+  text-decoration: underline;
+}
+
+.book-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-2);
+  background: var(--vp-c-bg-alt);
+}
+.tag-chip .tag-cat {
+  font-size: 0.66rem;
+  color: var(--vp-c-text-3);
+  margin-right: 4px;
+}
+.tag-theme {
+  background: rgba(79, 91, 213, 0.1);
+  color: var(--vp-c-brand-1);
+  border-color: transparent;
+}
+.tag-genre {
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--vp-c-accent);
+  border-color: transparent;
+}
+.tag-author {
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
 }
 
 /* ---------- (d) 标题锚点复制按钮 ---------- */

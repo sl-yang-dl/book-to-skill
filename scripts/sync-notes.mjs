@@ -78,7 +78,7 @@ if (fs.existsSync(samplesDir)) {
     const fm = parseFrontmatter(skill)
     const title = (fm.name || name).replace(/^note-/, '')
     const desc = fm.description || ''
-    const tags = parseTags(fm.tags)
+    const tags = parseTagsObject(skill) || { author: [], genre: [], theme: [] }
     // 封面:支持 samples/<书名>/cover.{jpg,png,webp},同步到 site/public/covers/
     let cover = ''
     for (const ext of ['jpg', 'png', 'webp']) {
@@ -135,4 +135,33 @@ for (const f of fs.readdirSync(coversDir)) {
     fs.rmSync(path.join(coversDir, f), { force: true })
     console.log(`  ✗ 清理残留封面:${f}`)
   }
+}
+
+// 解析结构化 tags 对象(tags: 后换行缩进的 author/genre/theme 列表),无正则依赖
+function parseTagsObject(md) {
+  const lines = md.split('\n')
+  const tags = { author: [], genre: [], theme: [] }
+  let inTags = false
+  for (const line of lines) {
+    if (line.startsWith('tags:')) {
+      inTags = true
+      continue
+    }
+    if (!inTags) continue
+    if (line.startsWith('  ') || line.startsWith('\t')) {
+      const idx = line.indexOf(':')
+      if (idx === -1) {
+        inTags = false
+        continue
+      }
+      const key = line.slice(0, idx).trim()
+      let val = line.slice(idx + 1).trim()
+      if (val.startsWith('[') && val.endsWith(']')) val = val.slice(1, -1)
+      const arr = val.split(',').map((s) => s.trim()).filter(Boolean)
+      if (arr.length) tags[key] = arr
+      continue
+    }
+    inTags = false
+  }
+  return tags
 }
